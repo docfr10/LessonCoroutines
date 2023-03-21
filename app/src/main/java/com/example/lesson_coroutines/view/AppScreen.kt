@@ -2,6 +2,8 @@ package com.example.lesson_coroutines.view
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -10,13 +12,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.lesson_coroutines.MyService
+import com.example.lesson_coroutines.service.MyService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun AppScreen(context: Context) {
     Column(
@@ -35,6 +37,7 @@ fun AppScreen(context: Context) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ServicesUI(context: Context) {
     val serviceStatus = remember {
@@ -57,11 +60,10 @@ fun ServicesUI(context: Context) {
                 serviceStatus.value = !serviceStatus.value
                 buttonValue.value = "Start Service"
                 context.stopService(Intent(context, MyService::class.java))
-
             } else {
                 serviceStatus.value = !serviceStatus.value
                 buttonValue.value = "Stop Service"
-                context.startService(Intent(context, MyService::class.java))
+                context.startForegroundService(Intent(context, MyService::class.java))
             }
         }) {
             Text(
