@@ -1,31 +1,75 @@
 package com.example.lesson_coroutines.view
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import android.content.Context
+import android.content.Intent
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.lesson_coroutines.MyService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 
 @Composable
-fun AppScreen() {
+fun AppScreen(context: Context) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        ServicesUI(context = context)
 
         //Fun1()
         //Fun2()
         //Fun3()
         //Fun4()
         //Fun5()
-        Fun6()
+        //Fun6()
+    }
+}
+
+@Composable
+fun ServicesUI(context: Context) {
+    val serviceStatus = remember {
+        mutableStateOf(false)
+    }
+    val buttonValue = remember {
+        mutableStateOf("Start Service")
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(all = 30.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        Button(onClick = {
+            if (serviceStatus.value) {
+                serviceStatus.value = !serviceStatus.value
+                buttonValue.value = "Start Service"
+                context.stopService(Intent(context, MyService::class.java))
+
+            } else {
+                serviceStatus.value = !serviceStatus.value
+                buttonValue.value = "Stop Service"
+                context.startService(Intent(context, MyService::class.java))
+            }
+        }) {
+            Text(
+                text = buttonValue.value,
+                modifier = Modifier.padding(10.dp),
+                fontSize = 20.sp
+            )
+        }
     }
 }
 
@@ -123,11 +167,11 @@ fun Fun6() {
         launch {
             val users = listOf("Tom", "Bob", "Sam")
             for (user in users) {
-                channel.send(user)  // Отправляем данные в канал
+                channel.send(user)
             }
-            channel.close()  // Закрытие канала
+            channel.close()
         }
-        for(user in channel) {  // Получаем данные из канала
+        for (user in channel) {
             textList.add(user)
         }
     }
