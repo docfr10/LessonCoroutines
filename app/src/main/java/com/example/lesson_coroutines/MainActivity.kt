@@ -1,11 +1,13 @@
 package com.example.lesson_coroutines
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.compose.ui.platform.LocalContext
+import com.example.lesson_coroutines.service.MyService
 import com.example.lesson_coroutines.ui.theme.LessonCoroutinesTheme
 import com.example.lesson_coroutines.view.AppScreen
 
@@ -19,5 +21,10 @@ class MainActivity : ComponentActivity() {
                 AppScreen(context = context)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        this.stopService(Intent(this, MyService::class.java))
     }
 }

@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.lesson_coroutines.MainActivity
 import com.example.lesson_coroutines.R
@@ -20,7 +21,7 @@ class MyService : Service() {
                 NotificationChannel(
                     "Channel",
                     "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT
+                    NotificationManager.IMPORTANCE_HIGH
                 )
             } else {
                 TODO("VERSION.SDK_INT < O")
@@ -31,6 +32,7 @@ class MyService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI)
         player.isLooping = true
@@ -39,7 +41,7 @@ class MyService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this,
-            0, notificationIntent, 0
+            0, notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
         val notification: Notification = NotificationCompat.Builder(this, "Channel")
             .setContentTitle("Example Service")
@@ -49,6 +51,10 @@ class MyService : Service() {
             .build()
         startForeground(1, notification)
         return START_STICKY
+    }
+
+    override fun stopService(name: Intent?): Boolean {
+        return super.stopService(name)
     }
 
     override fun onDestroy() {
